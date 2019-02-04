@@ -1,0 +1,81 @@
+<mat-spinner *ngIf="isLoading"></mat-spinner>
+<div class="container">
+  <div class="row">
+    <!-- <div class="col-xs-1" align="right">
+
+    </div> -->
+    <div class="col-xs-12" align="center">
+      <mat-icon class="date-arrow left-arrow" (click)="onScheduleDateChange(true)">chevron_left</mat-icon>
+      <h2 class="date-header">
+        {{dateCursor.getMonth() + 1}} / {{dateCursor.getDate()}} / {{dateCursor.getFullYear()}}
+      </h2>
+      <mat-icon class="calendar-icon" (click)="picker.open()">date_range</mat-icon>
+      <input style="height: 10px; width: 10px; visibility: hidden;"
+        [matDatepicker]="picker"
+        (dateChange)="onDatepickerChange($event.value)">
+      <mat-datepicker #picker></mat-datepicker>
+      <mat-icon class="date-arrow right-arrow" (click)="onScheduleDateChange(false)">chevron_right</mat-icon>
+    </div>
+    <!-- <div class="col-xs-1" align="left">
+
+    </div> -->
+  </div>
+  <div *ngIf="!isLoading && gameList.length !== 0; else noGames">
+    <mat-card *ngFor="let game of gameList; let i = index">
+      <div class="row">
+        <div class="col-xs-5"
+          align="center"
+          [ngClass]="{'selected': isSelected(game.awayTeam.id, i),
+            'wrong-prediction': game.status === 'Final' && isWrongPrediction(game.awayTeam.id, i),
+            'team-box': !isSelected(game.awayTeam.id, i) && checkGameDate()}"
+          (click)="onSelected(game.awayTeam.id, i)">
+          <img src="/assets/logos/{{game.awayTeam.id}}.svg" />
+          <p>{{game.awayTeam.name}}</p>
+          <p>{{game.awayTeam.record.wins}}-{{game.awayTeam.record.losses}}-{{game.awayTeam.record.ot}}</p>
+        </div>
+        <div class="col-xs-2" align="center">
+          <p class="at">@</p>
+        </div>
+        <div class="col-xs-5 team-box"
+          align="center"
+          [ngClass]="{'selected': isSelected(game.homeTeam.id, i),
+            'wrong-prediction': game.status === 'Final' && isWrongPrediction(game.homeTeam.id, i),
+            'team-box': !isSelected(game.homeTeam.id, i) && checkGameDate()}"
+          (click)="onSelected(game.homeTeam.id, i)">
+          <img src="assets/logos/{{game.homeTeam.id}}.svg" />
+          <p>{{game.homeTeam.name}}</p>
+          <p>{{game.homeTeam.record.wins}}-{{game.homeTeam.record.losses}}-{{game.homeTeam.record.ot}}</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-5" align="center">
+          <p style="font-size: 40px;">{{game.awayTeam.score}}</p>
+        </div>
+        <div *ngIf="game.status === 'Scheduled'; else final" class="col-xs-2" align="center">
+          <p style="font-size: 40px;" *ngIf="game.gameDate.getMinutes() > 10; else minLessThan10">{{game.gameDate.getHours() % 12}}:{{game.gameDate.getMinutes()}}</p>
+          <ng-template #minLessThan10>
+            <p style="font-size: 40px;">{{game.gameDate.getHours() % 12}}:0{{game.gameDate.getMinutes()}}</p>
+          </ng-template>
+        </div>
+        <ng-template #final>
+          <div class='col-xs-2' align="center">
+            <p style="font-size: 30px;">FINAL</p>
+          </div>
+        </ng-template>
+        <div class="col-xs-5" align="center">
+          <p style="font-size: 40px;">{{game.homeTeam.score}}</p>
+        </div>
+      </div>
+    </mat-card>
+    <div align="center">
+      <button class="prediction-button"
+        mat-raised-button color="primary"
+        [disabled]="userId === undefined || !checkGameDate()"
+        (click)="onSubmitPrediction()">Save Predictions</button>
+    </div>
+  </div>
+  <ng-template #noGames>
+    <p class="no-games">No games scheduled today</p>
+  </ng-template>
+
+</div>

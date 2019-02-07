@@ -1,4 +1,3 @@
-<mat-spinner *ngIf="isLoading"></mat-spinner>
 <div class="container">
   <div class="row">
     <!-- <div class="col-xs-1" align="right">
@@ -16,9 +15,9 @@
       <mat-datepicker #picker></mat-datepicker>
       <mat-icon class="date-arrow right-arrow" (click)="onScheduleDateChange(false)">chevron_right</mat-icon>
     </div>
-    <!-- <div class="col-xs-1" align="left">
-
-    </div> -->
+  </div>
+  <div *ngIf="isLoading" align="center">
+    <mat-spinner></mat-spinner>
   </div>
   <div *ngIf="!isLoading && gameList.length !== 0; else noGames">
     <mat-card *ngFor="let game of gameList; let i = index">
@@ -74,7 +73,7 @@
         (click)="onSubmitPrediction()">Save Predictions</button>
     </div>
   </div>
-  <ng-template #noGames>
+  <ng-template #noGames *ngIf="!isLoading">
     <p class="no-games">No games scheduled today</p>
   </ng-template>
 

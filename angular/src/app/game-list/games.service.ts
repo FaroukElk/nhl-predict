@@ -81,4 +81,9 @@ export class GamesService {
         console.log(result);
       });
   }
+
+  resetPredictions() {
+    this.predictions = [];
+    this.gamesUpdated.next({games: [...this.games], predictions: []})
+  }
 }

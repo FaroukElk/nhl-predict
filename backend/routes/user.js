@@ -1,7 +1,9 @@
 const express = require("express");
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
+const Prediction = require('../models/prediction');
 const router = express.Router();
+const checkPredictions = require('../js/functions');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const privateKey = fs.readFileSync('./private.key', 'utf-8');
@@ -14,7 +16,11 @@ router.post("/signup", (req, res, next) => {
       const user = new User({
         username: req.body.username,
         email: req.body.email,
-        password: hash
+        password: hash,
+        points: 0,
+        correct: 0,
+        wrong: 0,
+        ratio: 0
       });
       user.save()
         .then(result => {
@@ -51,7 +57,10 @@ router.post("/login", (req, res, next) => {
         });
       }
       const token = jwt.sign(
-        { username: fetchedUser.username, userId: fetchedUser._id },
+        {
+          username: fetchedUser.username,
+          userId: fetchedUser._id
+        },
         privateKey,
         { expiresIn: '1h',
           algorithm: 'RS256'}
@@ -68,6 +77,32 @@ router.post("/login", (req, res, next) => {
       console.log(err)
       return res.status(401).json({
         message: "Auth failed"
+      });
+    });
+});
+
+router.get('/stats/:id', (req, res, next) => {
+  const date = new Date();
+  date.setHours(0,0,0,0);
+  let fetchedUser;
+  User.findOne({_id: req.params.id})
+    .then(user => {
+      fetchedUser = user;
+      return Prediction.find({ userId: req.params.id, gameDate: {$lte: date}, actualWinner: null });
+    })
+    .then(predictions  => {
+      console.log(fetchedUser);
+      if (predictions.length > 0) {
+        fetchedUser = checkPredictions(fetchedUser, predictions);
+      }
+      res.status(200).json({
+        userStats: {
+          points: fetchedUser.points,
+          correct: fetchedUser.correct,
+          wrong: fetchedUser.wrong,
+          ratio: fetchedUser.ratio
+        },
+        message: "Success"
       });
     });
 });

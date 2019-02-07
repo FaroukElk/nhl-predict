@@ -5,8 +5,8 @@
     <li *ngIf="isAuthenticated">
       <a mat-button routerLink="/profile" routerLinkActive="mat-accent"><mat-icon style="margin-right: 5px;">account_circle</mat-icon>{{username}}</a>
     </li>
-    <li *ngIf="isAuthenticated">
-      100
+    <li *ngIf="isAuthenticated" class="score-text">
+      {{userPoints}}
     </li>
     <li>
       <a mat-button *ngIf="!isAuthenticated" routerLink="/login" routerLinkActive="mat-accent">Login</a>

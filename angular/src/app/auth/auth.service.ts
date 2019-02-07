@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
+import { StatsService } from '../game-list/stats.service';
+import { GamesService } from '../game-list/games.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -10,9 +12,10 @@ export class AuthService {
   private tokenTimer;
   private token: string;
   private userId: string;
-  private authStatusListener = new Subject<boolean>();
+  private authStatusListener = new Subject<{authenticated: boolean, username: string}>();
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router,
+    private statsService: StatsService, private gamesService: GamesService) {}
 
   getToken() {
     return this.token;
@@ -52,12 +55,13 @@ export class AuthService {
           const expiresInDuration = response.expiresIn;
           this.setAuthTimer(expiresInDuration);
           this.isAuthenticated = true;
-          this.authStatusListener.next(true);
+          this.statsService.requestUserStats(response.userId);
+          this.authStatusListener.next({authenticated: true, username: response.username});
           this.userId = response.userId;
           this.username = response.username;
           const now = new Date();
           const expirationDate = new Date(now.getTime() + expiresInDuration * 1000);
-          this.saveAuthData(token, expirationDate, this.userId, this.username)
+          this.saveAuthData(token, expirationDate, this.userId, this.username);
           this.router.navigate(['/']);
         }
       })
@@ -79,17 +83,19 @@ export class AuthService {
       this.username = authInfo.username;
       this.userId = authInfo.userId;
       this.setAuthTimer(timeValid / 1000);
-      this.authStatusListener.next(true);
+      this.statsService.requestUserStats(this.userId);
+      this.authStatusListener.next({authenticated: true, username: this.username});
     }
   }
 
   logout() {
     this.token = null;
     this.isAuthenticated = false;
-    this.authStatusListener.next(false);
+    this.authStatusListener.next({authenticated: false, username: ""});
     clearTimeout(this.tokenTimer);
     this.userId = null;
     this.clearAuthData();
+    this.gamesService.resetPredictions();
     this.router.navigate(['/']);
   }
 

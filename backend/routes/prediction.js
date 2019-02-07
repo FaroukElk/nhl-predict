@@ -1,35 +1,9 @@
 const request = require("request");
 const Prediction = require("../models/prediction");
+const User = require("../models/user");
 const express = require("express");
-
+const helper = require('../js/functions');
 const router = express.Router();
-
-function checkPredictions(games, predictions) {
-  let correct = 0;
-  let wrong = 0;
-  for (let i = 0; i < games.length; i++) {
-    if (games[i].homeTeam.score > games[i].awayTeam.score) {
-      predictions[i].actualWinner = games[i].homeTeam.id;
-    }
-    else {
-      predictions[i].actualWinner = games[i].awayTeam.id;
-    }
-    predictions[i].predictedWinner === predictions[i].actualWinner ? correct++ : wrong++;
-  }
-  const bulkOps = predictions.map((prediction) => {
-    return {
-      "updateOne": {
-        "filter": { "_id": prediction._id},
-        "update": { "$set": { "actualWinner": prediction.actualWinner }}
-      }
-    };
-  });
-
-  Prediction.bulkWrite(bulkOps, { "ordered": true, w: 1}, (err, result) => {
-    console.log(result);
-  });
-
-}
 
 router.get("/:id", (req, res, next) => {
   let [year,month,day] = req.query.date.split('-');
@@ -42,7 +16,6 @@ router.get("/:id", (req, res, next) => {
     (error, response, body) => {
       const games = [];
       const totalGames = body.totalGames;
-      console.log(body.totalGames);
       for (let i = 0; i < totalGames; i++) {
         const gameData = body.dates[0].games[i];
         const game = {
@@ -74,26 +47,14 @@ router.get("/:id", (req, res, next) => {
       }
       Prediction.find({gameDate: {$gte: dateStart, $lte: dateEnd}, userId: req.params.id})
         .then(result => {
-          if (result.length === 0) {
-            res.status(200).json({
-              predictionList: result,
-              gameList: games,
-              message: "success"
-            });
-          }
-          else {
-            if (games[games.length - 1].status === 'Final' && result[result.length-1].actualWinner === null) {
-              checkPredictions(games, result);
-            }
-            res.status(200).json({
-              predictionList: result,
-              gameList: games,
-              message: "success"
-            });
-          }
-        });
+          res.status(200).json({
+            predictionList: result,
+            gameList: games,
+            message: "success"
+          });
+      });
+    });
   });
-});
 
 router.post("/predictions", (req, res, next) => {
   Prediction.insertMany(req.body)

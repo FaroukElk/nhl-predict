@@ -42,6 +42,7 @@ export class GameListComponent implements OnInit, OnDestroy {
         this.isLoading = false;
         this.gameList = result.games;
         this.predictionList = result.predictions;
+        this.ref.detectChanges();
       });
     this.gamesService.getGames(this.dateString, this.userId);
   }
@@ -73,6 +74,7 @@ export class GameListComponent implements OnInit, OnDestroy {
   }
 
   onDatepickerChange(date: Date) {
+    this.isLoading = true;
     this.dateCursor = date;
     this.year = this.dateCursor.getFullYear();
     this.day = this.dateCursor.getDate();
@@ -82,6 +84,7 @@ export class GameListComponent implements OnInit, OnDestroy {
   }
 
   onScheduleDateChange(past: boolean) {
+    this.isLoading = true;
     if (past) {
       this.dateCursor.setDate(this.dateCursor.getDate() - 1);
     }
@@ -96,7 +99,7 @@ export class GameListComponent implements OnInit, OnDestroy {
   }
 
   onSelected(teamId: number, index: number) {
-    if (!this.checkGameDate()) {
+    if (!this.checkGameDate() || !this.userId) {
       return;
     }
     if (this.saveMode === 'create') {

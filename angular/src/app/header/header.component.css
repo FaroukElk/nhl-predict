@@ -22,8 +22,17 @@ li {
   margin-right: 5px;
 }
 
+li > button {
+  color: #FFF;
+}
+
 .nhl-logo {
   height: 50px;
   width: 50px;
   margin-right: 5px;
+}
+
+.score-text {
+  color: white;
+  font-size: 14px;
 }

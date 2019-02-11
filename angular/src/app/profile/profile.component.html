@@ -1,0 +1,61 @@
+<div class="container">
+  <div class="row">
+    <div class="col-xs-3 col-xs-offset-2" style="margin-top: 20px;">
+      <img style="height: 200px; width: 200px; float: left" src="/assets/profile.png" />
+    </div>
+    <div class="col-xs-4">
+      <h1 class="user-data-text" *ngIf="userData">{{userData.username}}</h1>
+      <h4 *ngIf="userData">Points: {{userData.points}}</h4>
+      <h4 *ngIf="userData">Correct Predictions: {{userData.correct}}</h4>
+      <h4 *ngIf="userData">Wrong Predictions: {{userData.wrong}}</h4>
+      <h4 *ngIf="userData">Prediction Ratio: {{userData.ratio | ratioPercent}}</h4>
+    </div>
+  </div>
+  <div class="row">
+    <h2 align="center">Prediction History</h2>
+    <div class="mat-elevation-z8">
+      <table mat-table [dataSource]="predictions" matSort>
+
+        <ng-container matColumnDef="position">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Num. </mat-header-cell>
+          <mat-cell *matCellDef="let prediction; let i = index">{{(i+1) + (10 * (currentPage - 1))}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="gameDate">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Game Date</mat-header-cell>
+          <mat-cell *matCellDef="let prediction">{{prediction.gameDate | date: "MM-dd-yyyy"}}</mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="awayTeam">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Away</mat-header-cell>
+          <mat-cell *matCellDef="let prediction">
+            <img class="logo"
+              [ngClass]="{'selected': prediction.predictedWinner === prediction.awayTeam}"
+              src="/assets/logos/{{prediction.awayTeam}}.svg" />
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="homeTeam">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Home</mat-header-cell>
+          <mat-cell  *matCellDef="let prediction">
+            <img class="logo"
+              [ngClass]="{'selected': prediction.predictedWinner === prediction.homeTeam}"
+              src="/assets/logos/{{prediction.homeTeam}}.svg" />
+          </mat-cell>
+        </ng-container>
+
+        <ng-container matColumnDef="correct">
+          <mat-header-cell *matHeaderCellDef mat-sort-header>Result</mat-header-cell>
+          <mat-cell *matCellDef="let prediction">
+              <img class="logo" *ngIf="prediction.actualWinner === prediction.predictedWinner" src="/assets/correct.svg" />
+              <img class="logo" *ngIf="prediction.actualWinner !== prediction.predictedWinner" src="/assets/wrong.svg" />
+          </mat-cell>
+        </ng-container>
+
+        <mat-header-row *matHeaderRowDef="columnsToDisplay"></mat-header-row>
+        <mat-row style="width: 100%;" *matRowDef="let row; columns: columnsToDisplay;"></mat-row>
+      </table>
+      <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" (page)="onChangedPage($event)" showFirstLastButtons></mat-paginator>
+    </div>
+  </div>
+</div>

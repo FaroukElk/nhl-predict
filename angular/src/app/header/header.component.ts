@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { AuthService } from '../auth/auth.service';
+import { AuthService } from '../services/auth.service';
 import { Subscription } from 'rxjs';
-import { StatsService } from '../game-list/stats.service';
+import { StatsService } from '../services/stats.service';
 
 @Component({
   selector: 'app-header',
@@ -12,14 +12,17 @@ export class HeaderComponent implements OnInit, OnDestroy {
   isAuthenticated: boolean;
   authStatusSub: Subscription;
   username: string;
+  userId: string;
   userPoints: number;
   userStatsSub: Subscription;
 
   constructor(private authService: AuthService, private statsService: StatsService) { }
 
   ngOnInit() {
-    this.isAuthenticated = this.authService.getAuthStatus();
-    this.isAuthenticated ? this.username = this.authService.getUsername() : this.username = '';
+    const authStatus = this.authService.getAuthStatus();
+    this.isAuthenticated = authStatus.authenticated;
+    this.username = authStatus.username;
+    this.userId = authStatus.userId;
     this.authStatusSub = this.authService.getAuthStatusListener()
       .subscribe(isAuth => {
         this.isAuthenticated = isAuth.authenticated;

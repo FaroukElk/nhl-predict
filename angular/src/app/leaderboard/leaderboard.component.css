@@ -1,0 +1,17 @@
+table {
+  margin-top: 20px;
+  width: 100%;
+}
+
+.mat-row:nth-child(odd){
+  background-color: #DCDCDC;
+}
+
+mat-header-row {
+  background-color: #0078D7;
+}
+
+mat-header-cell {
+  color: #FFF;
+  font-style: "bold";
+}

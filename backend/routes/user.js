@@ -92,7 +92,7 @@ router.get('/stats/:id', (req, res, next) => {
     })
     .then(predictions  => {
       console.log(fetchedUser);
-      if (predictions.length > 0) {
+       if (predictions.length > 0) {
         fetchedUser = checkPredictions(fetchedUser, predictions);
       }
       res.status(200).json({
@@ -105,6 +105,37 @@ router.get('/stats/:id', (req, res, next) => {
         message: "Success"
       });
     });
+});
+
+router.get('/:id', (req, res, next) => {
+  let fetchedUser;
+  User.findOne({_id: req.params.id})
+  .then(user => {
+    fetchedUser = user;
+    Prediction.find({userId: user._id, actualWinner: {$ne: null}})
+    .sort({gameDate: -1})
+    .then(predictions => {
+      res.status(200).json({
+        userData: {
+          username: fetchedUser.username,
+          points: fetchedUser.points,
+          correct: fetchedUser.correct,
+          wrong: fetchedUser.wrong,
+          ratio: fetchedUser.ratio
+        },
+        predictions: predictions,
+        message: "Success"
+      });
+    });
+  });
+});
+
+router.get("/leaderboard/top", (req, res, next) => {
+  User.find()
+  .sort({points: -1})
+  .then(users => {
+    res.status(200).json(users);
+  });
 });
 
 module.exports = router;

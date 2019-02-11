@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Game } from './game.model';
+import { Game } from '../models/game.model';
 import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs';
-import { Prediction } from './prediction.model';
+import { Prediction } from '../models/prediction.model';
 
 @Injectable({providedIn: 'root'})
 export class GamesService {

@@ -2,8 +2,10 @@ const express = require('express');
 const mongoose = require('mongoose');
 const userRoutes = require('./routes/user');
 const predictionRoutes = require('./routes/prediction');
+const User = require('./models/user');
 const bodyParser = require('body-parser');
 const app = express();
+const faker = require('faker');
 
 mongoose.connect('mongodb://localhost:27017/nhl_predict')
   .then(() => console.log('Connected to database!'))

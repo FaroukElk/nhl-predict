@@ -2,11 +2,11 @@
   <span><a routerLink="/"><img class="nhl-logo" src="/assets/logos/nhl-shield.svg" /> NHL Predict</a></span>
   <span class="spacer"></span>
   <ul>
-    <li *ngIf="isAuthenticated">
-      <a mat-button routerLink="/profile" routerLinkActive="mat-accent"><mat-icon style="margin-right: 5px;">account_circle</mat-icon>{{username}}</a>
+    <li>
+      <a mat-button routerLink="/leaderboard" routerLinkActive="mat-accent">Leaderboards</a>
     </li>
-    <li *ngIf="isAuthenticated" class="score-text">
-      {{userPoints}}
+    <li *ngIf="isAuthenticated">
+      <a mat-button routerLink="profile/{{userId}}" routerLinkActive="mat-accent"><mat-icon style="margin-right: 5px;">account_circle</mat-icon>{{username}}</a>
     </li>
     <li>
       <a mat-button *ngIf="!isAuthenticated" routerLink="/login" routerLinkActive="mat-accent">Login</a>

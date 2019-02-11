@@ -44,10 +44,11 @@ const checkPredictions = function (user, predictions) {
     Prediction.bulkWrite(bulkOps, { "ordered": true, w: 1}, (err, result) => {
       console.log(result);
     });
-  })
-  user.ratio = user.correct / user.wrong;
-  user.save();
-  return user;
+    user.ratio = user.correct / (user.correct + user.wrong);
+    console.log(user);
+    user.save();
+    return user;
+  });
 }
 
 function fetchJson(url) {

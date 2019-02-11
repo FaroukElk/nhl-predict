@@ -7,11 +7,15 @@ import { SignupComponent } from './auth/signup/signup.component';
 import { LoginComponent } from './auth/login/login.component';
 import { HeaderComponent } from './header/header.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatToolbarModule, MatCardModule, MatProgressSpinnerModule, MatIconModule, MatInputModule, MatButtonModule, MatDatepickerModule, MatNativeDateModule } from '@angular/material';
+import { MatToolbarModule, MatCardModule, MatProgressSpinnerModule, MatIconModule, MatInputModule, MatButtonModule, MatDatepickerModule, MatNativeDateModule, MatDialogModule, MatSortModule, MatPaginatorModule, MatTableModule } from '@angular/material';
 import { GameListComponent } from './game-list/game-list.component';
 import { HttpClientModule } from '@angular/common/http';
 import { SelectedDirective } from './selected.directive';
 import { FormsModule } from '@angular/forms';
+import { ProfileComponent } from './profile/profile.component';
+import { MyDialogComponent } from './my-dialog/my-dialog.component';
+import { RatioPercentPipe } from './ratio-percent.pipe';
+import { LeaderboardComponent } from './leaderboard/leaderboard.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +24,11 @@ import { FormsModule } from '@angular/forms';
     LoginComponent,
     HeaderComponent,
     GameListComponent,
-    SelectedDirective
+    SelectedDirective,
+    ProfileComponent,
+    MyDialogComponent,
+    RatioPercentPipe,
+    LeaderboardComponent
   ],
   imports: [
     BrowserModule,
@@ -35,7 +43,14 @@ import { FormsModule } from '@angular/forms';
     MatButtonModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    MatDialogModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule
+  ],
+  entryComponents: [
+    MyDialogComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

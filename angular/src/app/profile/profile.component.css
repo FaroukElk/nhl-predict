@@ -1,0 +1,16 @@
+table {
+  width: 100%;
+}
+
+.user-data-text {
+  margin-left: 10px;
+}
+
+.logo {
+  height: 40px;
+  width: 40px;
+}
+
+.selected {
+  background-color: #D3D3D3;
+}

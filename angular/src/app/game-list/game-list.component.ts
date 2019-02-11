@@ -1,9 +1,11 @@
 import { Component, OnInit, OnDestroy, Renderer2, ChangeDetectorRef } from '@angular/core';
-import { GamesService } from './games.service';
-import { Game } from './game.model';
+import { GamesService } from '../services/games.service';
+import { Game } from '../models/game.model';
 import { Subscription } from 'rxjs';
-import { Prediction } from './prediction.model';
-import { AuthService } from '../auth/auth.service';
+import { Prediction } from '../models/prediction.model';
+import { AuthService } from '../services/auth.service';
+import { MatDialog, MatDialogConfig } from '@angular/material';
+import { MyDialogComponent } from '../my-dialog/my-dialog.component';
 
 @Component({
   selector: 'app-game-list',
@@ -26,7 +28,7 @@ export class GameListComponent implements OnInit, OnDestroy {
   userId: string;
   saveMode: string = 'create';
 
-  constructor(private renderer: Renderer2,
+  constructor(private dialog: MatDialog,
     private gamesService: GamesService,
     private authService: AuthService,
     private ref: ChangeDetectorRef) { }
@@ -42,6 +44,12 @@ export class GameListComponent implements OnInit, OnDestroy {
         this.isLoading = false;
         this.gameList = result.games;
         this.predictionList = result.predictions;
+        if (this.predictionList.length > 0) {
+          this.saveMode = 'update';
+        }
+        else {
+          this.saveMode = 'create';
+        }
         this.ref.detectChanges();
       });
     this.gamesService.getGames(this.dateString, this.userId);
@@ -51,6 +59,15 @@ export class GameListComponent implements OnInit, OnDestroy {
     this.gamesSub.unsubscribe();
   }
 
+  openDialog(data: {title: string, body: string}) {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.disableClose = true;
+    dialogConfig.autoFocus = true;
+    dialogConfig.width = '250px';
+    dialogConfig.data = data;
+
+    const dialogRef = this.dialog.open(MyDialogComponent, dialogConfig);
+  }
   checkGameDate() {
     if (this.dateCursor.getTime() >= this.dateToday.getTime()){
       return true;
@@ -108,6 +125,8 @@ export class GameListComponent implements OnInit, OnDestroy {
         gameDate: this.gameList[index].gameDate,
         gameId: this.gameList[index].gameId,
         userId: this.userId,
+        homeTeam: this.gameList[index].homeTeam.id,
+        awayTeam: this.gameList[index].awayTeam.id,
         actualWinner: null
       }
       this.predictionList[index] = prediction;
@@ -132,9 +151,20 @@ export class GameListComponent implements OnInit, OnDestroy {
   onSubmitPrediction() {
     if (this.saveMode === 'create') {
       this.gamesService.savePredictions(this.predictionList);
+      this.saveMode = 'update';
+      const data = {
+        title: "Predictions Saved!",
+        body: "Predictions have been successfully saved"
+      };
+      this.openDialog(data);
     }
     else {
       this.gamesService.updatePredictions(this.predictionList);
+      const data = {
+        title: "Predictions Updated!",
+        body: "Predictions have been successfully updated"
+      };
+      this.openDialog(data);
     }
   }
 

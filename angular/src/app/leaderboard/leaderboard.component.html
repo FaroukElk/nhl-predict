@@ -1,0 +1,41 @@
+<div class="container">
+  <h1 align="center">Leaderboards</h1>
+  <div class="mat-elevation-z8">
+    <table mat-table [dataSource]="leaders" matSort>
+
+      <ng-container matColumnDef="position">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Num. </mat-header-cell>
+        <mat-cell *matCellDef="let element; let i = index">{{(i+1) + (10 * (currentPage - 1))}}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="username">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Username</mat-header-cell>
+        <mat-cell *matCellDef="let user"><a [routerLink]="['/profile', user._id]">{{user.username}}</a></mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="correct">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Correct</mat-header-cell>
+        <mat-cell *matCellDef="let user">{{user.correct}}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="wrong">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Wrong</mat-header-cell>
+        <mat-cell  *matCellDef="let user">{{user.wrong}}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="ratio">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Prediction Ratio</mat-header-cell>
+        <mat-cell *matCellDef="let user">{{user.ratio | ratioPercent}}</mat-cell>
+      </ng-container>
+
+      <ng-container matColumnDef="points">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>Points</mat-header-cell>
+        <mat-cell *matCellDef="let user">{{user.points}}</mat-cell>
+      </ng-container>
+
+      <mat-header-row *matHeaderRowDef="columnsToDisplay"></mat-header-row>
+      <mat-row style="width: 100%;" *matRowDef="let row; columns: columnsToDisplay;"></mat-row>
+    </table>
+    <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]" (page)="onChangedPage($event)" showFirstLastButtons></mat-paginator>
+  </div>
+</div>

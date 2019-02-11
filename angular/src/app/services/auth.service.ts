@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Subject } from 'rxjs';
 import { Router } from '@angular/router';
-import { StatsService } from '../game-list/stats.service';
-import { GamesService } from '../game-list/games.service';
+import { StatsService } from './stats.service';
+import { GamesService } from './games.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -22,7 +22,11 @@ export class AuthService {
   }
 
   getAuthStatus() {
-    return this.isAuthenticated;
+    return {
+      authenticated: this.isAuthenticated,
+      username: this.username,
+      userId: this.userId
+    };
   }
 
   getUserId() {
@@ -81,6 +85,7 @@ export class AuthService {
       this.token = authInfo.token;
       this.isAuthenticated = true;
       this.username = authInfo.username;
+      console.log(this.username);
       this.userId = authInfo.userId;
       this.setAuthTimer(timeValid / 1000);
       this.statsService.requestUserStats(this.userId);
